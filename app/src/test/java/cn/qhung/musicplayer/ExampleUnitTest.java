@@ -1,4 +1,4 @@
-package musicplayer.qhung.cn.cloudmusicplayer;
+package cn.qhung.musicplayer;
 
 import org.junit.Test;
 

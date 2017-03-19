@@ -1,4 +1,4 @@
-package musicplayer.qhung.cn.cloudmusicplayer;
+package cn.qhung.musicplayer;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;

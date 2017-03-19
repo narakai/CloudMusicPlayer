@@ -1,4 +1,4 @@
-package musicplayer.qhung.cn.cloudmusicplayer;
+package cn.qhung.musicplayer;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
@@ -21,6 +21,6 @@ public class ExampleInstrumentedTest {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getTargetContext();
 
-        assertEquals("musicplayer.qhung.cn.cloudmusicplayer", appContext.getPackageName());
+        assertEquals("musicplayer.cn.cloudmusicplayer", appContext.getPackageName());
     }
 }
