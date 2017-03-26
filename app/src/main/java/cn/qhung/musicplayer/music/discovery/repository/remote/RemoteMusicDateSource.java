@@ -42,11 +42,10 @@ public class RemoteMusicDateSource implements MusicDataSource {
                     public Boolean call(Response<List<Banner>> response) {
                         return response != null && response.getCode() == Response.OK;
                     }
-                })
-                .flatMap(new Func1<Response<List<Banner>>, Observable<List<Banner>>>() {
+                }).map(new Func1<Response<List<Banner>>, List<Banner>>() {
                     @Override
-                    public Observable<List<Banner>> call(Response<List<Banner>> response) {
-                        return Observable.just(response.getData());
+                    public List<Banner> call(Response<List<Banner>> listResponse) {
+                        return listResponse.getData();
                     }
                 });
     }
@@ -58,13 +57,10 @@ public class RemoteMusicDateSource implements MusicDataSource {
                     public Boolean call(Response<List<MusicPlayList>> response) {
                         return response != null && response.getCode() == Response.OK;
                     }
-                })
-                .flatMap(new Func1<Response<List<MusicPlayList>>,
-                        Observable<List<MusicPlayList>>>() {
+                }).map(new Func1<Response<List<MusicPlayList>>, List<MusicPlayList>>() {
                     @Override
-                    public Observable<List<MusicPlayList>> call(
-                            Response<List<MusicPlayList>> response) {
-                        return Observable.just(response.getData());
+                    public List<MusicPlayList> call(Response<List<MusicPlayList>> listResponse) {
+                        return listResponse.getData();
                     }
                 });
     }

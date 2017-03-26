@@ -34,14 +34,17 @@ public class MusicListAdapter extends BaseRecyclerViewAdapter<MusicPlayList> {
             if (collection.size() > 1) {
                 ImageLoader.show(binding.ivThreeOneOne.getContext(),
                         collection.get(0).getDisplay_img(), binding.ivThreeOneOne);
+                binding.tvThreeOneOneTitle.setText(collection.get(0).getCollect_name());
             }
             if (collection.size() > 2) {
                 ImageLoader.show(binding.ivThreeOneTwo.getContext(),
                         collection.get(1).getDisplay_img(), binding.ivThreeOneTwo);
+                binding.tvThreeOneTwoTitle.setText(collection.get(1).getCollect_name());
             }
             if (collection.size() > 2) {
                 ImageLoader.show(binding.ivThreeOneThree.getContext(),
                         collection.get(2).getDisplay_img(), binding.ivThreeOneThree);
+                binding.tvThreeOneThreeTitle.setText(collection.get(2).getCollect_name());
             }
         }
     }

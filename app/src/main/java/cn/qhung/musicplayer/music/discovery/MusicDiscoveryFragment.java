@@ -10,12 +10,9 @@ import android.support.v4.view.PagerAdapter;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
-
 import cn.qhung.musicplayer.R;
 import cn.qhung.musicplayer.base.BaseFragment;
 import cn.qhung.musicplayer.databinding.FragmentMusicDiscoveryBinding;
-import cn.qhung.musicplayer.net.entities.Banner;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 

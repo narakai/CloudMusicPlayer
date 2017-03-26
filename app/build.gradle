@@ -34,8 +34,9 @@ dependencies {
     })
     compile project(':xrecyclerview')
     compile project(':zoomlibrary')
+    compile 'com.facebook.stetho:stetho:1.4.1'
 
-
+    compile 'com.facebook.stetho:stetho-js-rhino:1.4.1'
     compile 'com.android.support:appcompat-v7:25.3.0'
     compile 'com.android.support:design:25.3.0'
     compile 'com.android.support:support-v4:25.3.0'

@@ -33,8 +33,8 @@ public class MusicDbHelper extends SQLiteOpenHelper {
 
     private static final String SQL_CREATE_BANNER =
             "CREATE TABLE " + BannerPersistenceContract.BannerEntry.TABLE_NAME + " (" +
-                    BannerPersistenceContract.BannerEntry._ID + TEXT_TYPE + " PRIMARY KEY," +
-                    BannerPersistenceContract.BannerEntry.COLUMN_NAME_ENTRY_ID + INTEGER_TYPE + COMMA_SEP +
+//                    BannerPersistenceContract.BannerEntry._ID + TEXT_TYPE + COMMA_SEP +
+                    BannerPersistenceContract.BannerEntry.COLUMN_NAME_ENTRY_ID + INTEGER_TYPE + "PRIMARY KEY," +
                     BannerPersistenceContract.BannerEntry.COLUMN_NAME_TIME + TEXT_TYPE + COMMA_SEP +
                     BannerPersistenceContract.BannerEntry.COLUMN_NAME_PIC_URL + TEXT_TYPE + COMMA_SEP +
                     BannerPersistenceContract.BannerEntry.COLUMN_NAME_LINK_URL + TEXT_TYPE +

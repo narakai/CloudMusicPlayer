@@ -46,6 +46,7 @@ public class MusicRepository {
                 .flatMap(new Func1<List<Banner>, Observable<List<Banner>>>() {
                     @Override
                     public Observable<List<Banner>> call(List<Banner> banners) {
+                        Log.QLog().d("is empty " + checkListIsEmpty(banners));
                         if (checkListIsEmpty(banners)) {
                             Observable<List<Banner>> observable = mMusicRemoteDataSource.getBanner();
                             return saveBanner(observable);

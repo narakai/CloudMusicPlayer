@@ -2,8 +2,10 @@ package cn.qhung.musicplayer.music.discovery.musiclist;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
 import android.widget.ImageView;
 
+import com.example.xrecyclerview.WrapAdapter;
 import com.youth.banner.loader.ImageLoader;
 
 import org.jetbrains.annotations.NotNull;
@@ -11,6 +13,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
+import cn.qhung.musicplayer.base.OnItemClickListener;
+import cn.qhung.musicplayer.music.discovery.musiclist.musicmenu.MusicMenuActivity;
 import cn.qhung.musicplayer.music.discovery.repository.MusicRepository;
 import cn.qhung.musicplayer.net.entities.Banner;
 import cn.qhung.musicplayer.net.entities.MusicPlayList;
@@ -25,7 +29,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * Created by qhung on 2017/3/22.
  */
 
-public class MusicListPresenter implements MusicListContract.Presenter {
+public class MusicListPresenter implements MusicListContract.Presenter,
+        OnItemClickListener<MusicPlayList> {
     private final MusicListContract.View mView;
     private final BaseSchedulerProvider mSchedulerProvider;
     private final CompositeSubscription mSubscriptions;
@@ -106,12 +111,28 @@ public class MusicListPresenter implements MusicListContract.Presenter {
         return mAdapter;
     }
 
+    @Override
+    public void onClick(MusicPlayList musicPlayList, int position) {
+        MusicMenuActivity.start(mView.getContext(), musicPlayList);
+    }
+
+    @Override
+    public void onItemClicked(RecyclerView recyclerView, int position, View v) {
+        RecyclerView.Adapter adapter = recyclerView.getAdapter();
+        if (adapter instanceof WrapAdapter) {
+            int headerCount = ((WrapAdapter) adapter).getHeadersCount();
+            MusicMenuActivity.start(v.getContext(), mAdapter.getData().get(position - headerCount));
+        }
+
+    }
+
     private class BannerImageLoaderAdapter extends ImageLoader {
 
         @Override
         public void displayImage(Context context, Object path, ImageView imageView) {
             if (path instanceof Banner) {
-                cn.qhung.musicplayer.utils.image.ImageLoader.show(context, ((Banner) path).getPicUrl(), imageView);
+                cn.qhung.musicplayer.utils.image.ImageLoader.show(
+                        context, ((Banner) path).getPicUrl(), imageView);
                 imageView.setTag(path);
             }
         }

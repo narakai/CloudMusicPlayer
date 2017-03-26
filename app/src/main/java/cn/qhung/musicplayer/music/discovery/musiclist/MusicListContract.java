@@ -8,13 +8,14 @@ import java.util.List;
 
 import cn.qhung.musicplayer.base.BaseContract;
 import cn.qhung.musicplayer.net.entities.Banner;
+import cn.qhung.musicplayer.utils.ItemClickSupport;
 
 /**
  * Created by qhung on 2017/3/22.
  */
 
 public interface MusicListContract {
-    interface Presenter extends BaseContract.BasePresenter {
+    interface Presenter extends BaseContract.BasePresenter, ItemClickSupport.OnItemClickListener {
 
         RecyclerView.Adapter getAdapter();
     }

@@ -1,7 +1,5 @@
 package cn.qhung.musicplayer.net.entities;
 
-import cn.qhung.musicplayer.utils.Log;
-
 /**
  * Created by qhung on 2017/3/25.
  */

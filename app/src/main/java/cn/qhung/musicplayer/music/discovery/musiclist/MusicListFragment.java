@@ -12,6 +12,7 @@ import android.view.animation.Animation;
 import android.view.animation.LinearInterpolator;
 import android.view.animation.RotateAnimation;
 
+import com.youth.banner.listener.OnBannerClickListener;
 import com.youth.banner.loader.ImageLoader;
 
 import java.util.List;
@@ -23,8 +24,10 @@ import cn.qhung.musicplayer.databinding.MusicListFooterBinding;
 import cn.qhung.musicplayer.databinding.MusicListHeaderBinding;
 import cn.qhung.musicplayer.music.discovery.Injection;
 import cn.qhung.musicplayer.net.entities.Banner;
+import cn.qhung.musicplayer.utils.ItemClickSupport;
 import cn.qhung.musicplayer.utils.Log;
 import cn.qhung.musicplayer.utils.schedulers.SchedulerProvider;
+import cn.qhung.musicplayer.utils.webview.WebViewActivity;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -126,6 +129,7 @@ public class MusicListFragment extends BaseFragment<FragmentMusicListBinding>
         bindingView.xrvEveryday.setHasFixedSize(false);
         bindingView.xrvEveryday.setItemAnimator(new DefaultItemAnimator());
         bindingView.xrvEveryday.setAdapter(mPresenter.getAdapter());
+        ItemClickSupport.addTo(bindingView.xrvEveryday).setOnItemClickListener(mPresenter);
     }
 
     @Override
@@ -134,9 +138,17 @@ public class MusicListFragment extends BaseFragment<FragmentMusicListBinding>
     }
 
     @Override
-    public void showBanner(List<Banner> banners, ImageLoader loader) {
+    public void showBanner(final List<Banner> banners, ImageLoader loader) {
         bindingView.xrvEveryday.setVisibility(View.VISIBLE);
+        mHeaderBinding.banner.setOffscreenPageLimit(banners.size());
         mHeaderBinding.banner.setImages(banners).setImageLoader(loader).start();
+        mHeaderBinding.banner.setOnBannerClickListener(new OnBannerClickListener() {
+            @Override
+            public void OnBannerClick(int position) {
+                Banner banner = banners.get(position - 1);
+                WebViewActivity.loadUrl(getContext(), banner.getLinkUrl(), null);
+            }
+        });
         if (mHeaderBinding != null && mHeaderBinding.banner != null) {
             mHeaderBinding.banner.startAutoPlay();
             mHeaderBinding.banner.setDelayTime(4000);

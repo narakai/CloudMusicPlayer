@@ -1,12 +1,16 @@
 package cn.qhung.musicplayer.net.entities;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by qhung on 2017/3/25.
  */
 
-public class MusicPlayList {
+public class MusicPlayList implements Parcelable {
 
     /**
      * name : 虾米
@@ -31,7 +35,7 @@ public class MusicPlayList {
     public void setMusic(List<MusicCollection> Music) {
         this.Music = Music;
     }
-    public static class MusicCollection {
+    public static class MusicCollection implements Parcelable {
 
         /**
          * platform : 2
@@ -86,6 +90,74 @@ public class MusicPlayList {
         public void setUser_name(String user_name) {
             this.user_name = user_name;
         }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            dest.writeInt(this.platform);
+            dest.writeInt(this.list_id);
+            dest.writeString(this.collect_name);
+            dest.writeString(this.display_img);
+            dest.writeString(this.user_name);
+        }
+
+        public MusicCollection() {
+        }
+
+        protected MusicCollection(Parcel in) {
+            this.platform = in.readInt();
+            this.list_id = in.readInt();
+            this.collect_name = in.readString();
+            this.display_img = in.readString();
+            this.user_name = in.readString();
+        }
+
+        public static final Creator<MusicCollection> CREATOR = new Creator<MusicCollection>() {
+            @Override
+            public MusicCollection createFromParcel(Parcel source) {
+                return new MusicCollection(source);
+            }
+
+            @Override
+            public MusicCollection[] newArray(int size) {
+                return new MusicCollection[size];
+            }
+        };
     }
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.name);
+        dest.writeList(this.Music);
+    }
+
+    public MusicPlayList() {
+    }
+
+    protected MusicPlayList(Parcel in) {
+        this.name = in.readString();
+        this.Music = new ArrayList<MusicCollection>();
+        in.readList(this.Music, MusicCollection.class.getClassLoader());
+    }
+
+    public static final Parcelable.Creator<MusicPlayList> CREATOR = new Parcelable.Creator<MusicPlayList>() {
+        @Override
+        public MusicPlayList createFromParcel(Parcel source) {
+            return new MusicPlayList(source);
+        }
+
+        @Override
+        public MusicPlayList[] newArray(int size) {
+            return new MusicPlayList[size];
+        }
+    };
 }

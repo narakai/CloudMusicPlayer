@@ -13,6 +13,7 @@ import com.squareup.sqlbrite.SqlBrite;
 import org.jetbrains.annotations.NotNull;
 
 import java.sql.Date;
+import java.util.ArrayList;
 import java.util.List;
 
 import cn.qhung.musicplayer.music.discovery.repository.MusicDataSource;
@@ -44,6 +45,7 @@ public class LocalMusicDateSource implements MusicDataSource {
         MusicDbHelper dbHelper = new MusicDbHelper(context);
         SqlBrite sqlBrite = SqlBrite.create();
         mDatabaseHelper = sqlBrite.wrapDatabaseHelper(dbHelper, schedulerProvider.io());
+        mDatabaseHelper.setLoggingEnabled(true);
     }
 
     public static LocalMusicDateSource getInstance(@NotNull Context context,
@@ -56,9 +58,13 @@ public class LocalMusicDateSource implements MusicDataSource {
 
     public void saveBanner(List<Banner> banners) {
         final Date date = new Date(System.currentTimeMillis());
+
+        BriteDatabase.Transaction transaction = mDatabaseHelper.newTransaction();
         for (Banner banner : banners) {
             saveBanner(banner, date);
         }
+        transaction.markSuccessful();
+        transaction.end();
     }
 
     private void saveBanner(Banner banner, Date date) {
@@ -69,20 +75,22 @@ public class LocalMusicDateSource implements MusicDataSource {
         values.put(BannerPersistenceContract.BannerEntry.COLUMN_NAME_TIME, date.toString());
         values.put(BannerPersistenceContract.BannerEntry.COLUMN_NAME_PIC_URL, banner.getPicUrl());
         values.put(BannerPersistenceContract.BannerEntry.COLUMN_NAME_LINK_URL, banner.getLinkUrl());
-        Log.QLog().d("insert ....... ");
-//        mDatabaseHelper.insert(BannerPersistenceContract.BannerEntry.TABLE_NAME,
-//                values, SQLiteDatabase.CONFLICT_REPLACE);
+        mDatabaseHelper.insert(BannerPersistenceContract.BannerEntry.TABLE_NAME,
+                values, SQLiteDatabase.CONFLICT_NONE);
     }
 
     @NonNull
     private Banner createBannerEntity(@NonNull Cursor c) {
         int itemId = c.getInt(
                 c.getColumnIndexOrThrow(BannerPersistenceContract.BannerEntry.COLUMN_NAME_ENTRY_ID));
+        String time = c.getString(
+                c.getColumnIndexOrThrow(BannerPersistenceContract.BannerEntry.COLUMN_NAME_TIME));
         String picUrl = c.getString(
                 c.getColumnIndexOrThrow(BannerPersistenceContract.BannerEntry.COLUMN_NAME_PIC_URL));
         String linkUrl = c.getString(
                 c.getColumnIndexOrThrow(
                         BannerPersistenceContract.BannerEntry.COLUMN_NAME_LINK_URL));
+        Log.QLog().d(itemId);
         return new Banner(itemId, linkUrl, picUrl);
     }
 
@@ -97,23 +105,39 @@ public class LocalMusicDateSource implements MusicDataSource {
         return null;
     }
 
+    @NonNull
     private Observable<List<Banner>> getBanner(@NonNull Date date) {
         checkNotNull(date);
         final String[] banner = {
                 BannerPersistenceContract.BannerEntry.COLUMN_NAME_ENTRY_ID,
+                BannerPersistenceContract.BannerEntry.COLUMN_NAME_TIME,
                 BannerPersistenceContract.BannerEntry.COLUMN_NAME_PIC_URL,
                 BannerPersistenceContract.BannerEntry.COLUMN_NAME_LINK_URL
         };
-        String sql = String.format("SELECT %s FROM %s where %s",
+        String sql = String.format("SELECT %s FROM %s WHERE %s='%s'",
                 TextUtils.join(",", banner),
                 BannerPersistenceContract.BannerEntry.TABLE_NAME,
-                BannerPersistenceContract.BannerEntry.COLUMN_NAME_TIME + "=" + date.toString());
-        return mDatabaseHelper.createQuery(BannerPersistenceContract.BannerEntry.TABLE_NAME, sql)
-                .mapToList(new Func1<Cursor, Banner>() {
+                BannerPersistenceContract.BannerEntry.COLUMN_NAME_TIME, date.toString());
+        Cursor cursor = mDatabaseHelper.query(sql);
+        return Observable.just(cursor)
+                .subscribeOn(mSchedulerProvider.io())
+                .unsubscribeOn(mSchedulerProvider.io())
+                .observeOn(mSchedulerProvider.ui())
+                .map(new Func1<Cursor, List<Banner>>() {
                     @Override
-                    public Banner call(Cursor cursor) {
-                        return createBannerEntity(cursor);
+                    public List<Banner> call(Cursor cursor) {
+                        List<Banner> list = new ArrayList<>();
+                        if (cursor.moveToFirst()) {
+                            do {
+                                Banner b = createBannerEntity(cursor);
+                                list.add(b);
+                            } while (cursor.moveToNext());
+                        }
+                        Log.QLog().d(list.size());
+                        cursor.close();
+                        return list;
                     }
                 });
+
     }
 }
